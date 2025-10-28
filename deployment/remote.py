@@ -43,6 +43,7 @@ flags.mark_bool_flags_as_mutual_exclusive(
     ]
 )
 
+
 def create() -> None:
     """Creates a new deployment."""
     # First wrap the agent in AdkApp
@@ -61,11 +62,13 @@ def create() -> None:
     )
     print(f"Created remote app: {remote_app.resource_name}")
 
+
 def delete(resource_id: str) -> None:
     """Deletes an existing deployment."""
     remote_app = agent_engines.get(resource_id)
     remote_app.delete(force=True)
     print(f"Deleted remote app: {resource_id}")
+
 
 def list_deployments() -> None:
     """Lists all deployments."""
@@ -76,6 +79,7 @@ def list_deployments() -> None:
     print("Deployments:")
     for deployment in deployments:
         print(f"- {deployment.resource_name}")
+
 
 def create_session(resource_id: str, user_id: str) -> None:
     """Creates a new session for the specified user."""
@@ -88,6 +92,7 @@ def create_session(resource_id: str, user_id: str) -> None:
     print(f"  Last update time: {remote_session['lastUpdateTime']}")
     print("\nUse this session ID with --session_id when sending messages.")
 
+
 def list_sessions(resource_id: str, user_id: str) -> None:
     """Lists all sessions for the specified user."""
     remote_app = agent_engines.get(resource_id)
@@ -95,6 +100,7 @@ def list_sessions(resource_id: str, user_id: str) -> None:
     print(f"Sessions for user '{user_id}':")
     for session in sessions:
         print(f"- Session ID: {session['id']}")
+
 
 def get_session(resource_id: str, user_id: str, session_id: str) -> None:
     """Gets a specific session."""
@@ -106,7 +112,10 @@ def get_session(resource_id: str, user_id: str, session_id: str) -> None:
     print(f"  App name: {session['app_name']}")
     print(f"  Last update time: {session['last_update_time']}")
 
-def send_message(resource_id: str, user_id: str, session_id: str, message: str) -> None:
+
+def send_message(
+    resource_id: str, user_id: str, session_id: str, message: str
+) -> None:
     """Sends a message to the deployed agent."""
     remote_app = agent_engines.get(resource_id)
 
@@ -120,6 +129,7 @@ def send_message(resource_id: str, user_id: str, session_id: str, message: str) 
     ):
         print(event)
 
+
 def main(argv=None):
     """Main entry point for deployment script."""
 
@@ -128,18 +138,23 @@ def main(argv=None):
         argv = flags.FLAGS(sys.argv)
     else:
         argv = flags.FLAGS(argv)
-    
 
     # Load environment variables from .env file
     load_dotenv()
 
     # Edit flags
     project_id = (
-        FLAGS.project_id if FLAGS.project_id else os.getenv("GOOGLE_CLOUD_PROJECT")
+        FLAGS.project_id if FLAGS.project_id
+        else os.getenv("GOOGLE_CLOUD_PROJECT")
     )
-    location = FLAGS.location if FLAGS.location else os.getenv("GOOGLE_CLOUD_LOCATION")
-    bucket = FLAGS.bucket if FLAGS.bucket else os.getenv("GOOGLE_CLOUD_STAGING_BUCKET")
-    user_id = FLAGS.user_id
+    location = (
+        FLAGS.location if FLAGS.location
+        else os.getenv("GOOGLE_CLOUD_LOCATION")
+    )
+    bucket = (
+        FLAGS.bucket if FLAGS.bucket
+        else os.getenv("GOOGLE_CLOUD_STAGING_BUCKET")
+    )
 
     if not project_id:
         print("Missing required environment variable: GOOGLE_CLOUD_PROJECT")
@@ -148,21 +163,29 @@ def main(argv=None):
         print("Missing required environment variable: GOOGLE_CLOUD_LOCATION")
         return
     elif not bucket:
-        print("Missing required environment variable: GOOGLE_CLOUD_STAGING_BUCKET")
+        print(
+            "Missing required environment variable: "
+            "GOOGLE_CLOUD_STAGING_BUCKET"
+        )
         return
-    
-    # Initialize vertex AI SDK with service account credentials 
+
+    # Initialize vertex AI SDK with service account credentials
     # Retrieve service account credentials from secret manager.
-    service_account_secret = 'config/credentials/service_account.json'
+    service_account_secret = "config/credentials/service_account.json"
     credentials = service_account.Credentials.from_service_account_file(
         service_account_secret,
         scopes=[
-            'https://www.googleapis.com/auth/bigquery', 
-            'https://www.googleapis.com/auth/cloud-platform',
-            'https://www.googleapis.com/auth/generative-language'
-        ]
+            "https://www.googleapis.com/auth/bigquery",
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/generative-language",
+        ],
     )
-    vertexai.init(project="porygon-pipelines", location="us-east4", credentials=credentials, staging_bucket=bucket)
+    vertexai.init(
+        project="porygon-pipelines",
+        location="us-east4",
+        credentials=credentials,
+        staging_bucket=bucket,
+    )
 
     # implement functions
     if FLAGS.create:
@@ -199,13 +222,14 @@ def main(argv=None):
         if not FLAGS.session_id:
             print("session_id is required for send")
             return
-        send_message(FLAGS.resource_id, FLAGS.user_id, FLAGS.session_id, FLAGS.message)
+        send_message(
+            FLAGS.resource_id, FLAGS.user_id, FLAGS.session_id, FLAGS.message
+        )
     else:
         print(
-            "Please specify one of: --create, --delete, --list, --create_session, --list_sessions, --get_session, or --send"
+            "Please specify one of: --create, --delete, --list, "
+            "--create_session, --list_sessions, --get_session, or --send"
         )
-
-
 
 
 if __name__ == "__main__":
