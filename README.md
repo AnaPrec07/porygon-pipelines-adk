@@ -4,7 +4,7 @@
 
 A Python-based AI agent framework built with Google Cloud's Agent Development Kit (ADK) that provides BigQuery data exploration capabilities through a conversational interface.
 
-## 🏗️ Architecture
+## Architecture
 
 This project implements an AI agent with the following architecture:
 
