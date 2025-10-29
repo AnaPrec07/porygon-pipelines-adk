@@ -66,7 +66,7 @@ Before this implementation, the e-commerce company with name **The Look E-commer
 │   └── credentials
 │       └── service_account.json
 ├── deployment
-│   ├── __ini__.py
+│   ├── __init__.py
 │   └── remote.py               # Vertex AI deployment automation
 ├── docs
 ├── index.html
