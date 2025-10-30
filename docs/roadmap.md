@@ -40,7 +40,7 @@ This project aims to develop a comprehensive AI agent that serves as the first l
 
 **Deliverables**:
 - `root_agent/tools/statistical_analysis.py`
-- Statistical models and lightweights ML algorithms
+- Statistical models and lightweight ML algorithms
 - Insight generation templates
 
 ### 1.3 Enhanced Agent Capabilities
